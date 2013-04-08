@@ -1,0 +1,210 @@
+\documentclass[10pt]{article}
+%================================= Packages ==================================%
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{gensymb}
+\usepackage{latexsym}
+\usepackage{enumerate}
+\usepackage{setspace}
+\usepackage{rotating}
+%\usepackage{dsfont}
+%\usepackage[urlcolor=blue,colorlinks=true]{hyperref}
+
+\newcommand{\name}{Yunkai Cui}
+\newcommand{\lectitle}{Homework 4}
+\newcommand{\lecdate}{4/3/2013}
+\newcommand{\email}{yunkai@seas.upenn.edu}
+\newcommand{\banner}{
+\begin{center}
+  \makebox{
+    \vbox{
+      {\bf\large CIS 580 -- Machine Perception} \\ \vfill
+      {\bf\large\lectitle} \\
+      \name\ \hfill \email\  \hfill \lecdate \\
+    }
+  }
+\end{center}
+\bigskip
+}
+
+\begin{document}
+\banner
+
+\section{Geometry and model fitting}
+\subsection{Line-point duality in projective geometry}
+\begin{enumerate}
+\item
+As shown in the figure ~\ref{fig:figure1}, the line(red) passing through two points can be represented by the normal vector(red) which is got from $p_1\times p_2$. which can be simply proofed as follows. \\
+\begin{equation}
+p_1=(x_1,y_1,1)
+\end{equation}
+\begin{equation}
+p_2=(x_2,y_2,1)
+\end{equation}
+\begin{equation}
+p_1\times p_2=(y_1-y_2,x_2-x_1,x_1*y_2-x_2*y_1)
+\end{equation}
+Which means the function of the line is \\
+\begin{equation}
+(y_1-y_2)x+(x_2-x_1)y+(x_1*y_2-x_2*y_1)w=0
+\end{equation}
+Then we take into the homogeneous coordinates to examine the line function.
+\begin{equation}
+(y_1-y_2)x_1+(x_2-x_1)y_1+(x_1*y_2-x_2*y_1)=0
+\end{equation}
+\begin{equation}
+(y_1-y_2)x_2+(x_2-x_1)y_2+(x_1*y_2-x_2*y_1)=0
+\end{equation}
+So it is the function of the line, which can be represent by using a vector $(y_1-y_2,x_2-x_1,x_1*y_2-x_2*y_1)^T$
+\begin{figure}[htdb]
+\centering
+\includegraphics[width=0.6\textwidth]{HW1_1_1.png}
+\caption{The figure shows $l=p_1\times p_2$}\label{fig:figure1}
+\end{figure}
+\item
+As shown in the figure ~\ref{fig:figure2}, the intersection point(green) on the screen plane is the projection of the end point of the green vector out of plane, whose coordinates is $(x_0,y_0,1)$ as inhomogeneous coordinates but actually the homogeneous coordinates of in plane intersection point. \\
+It can be proved in the following way.\\
+Suppose the intersection point is $p_0$ $(x_0,y_0,1)$ for homogeneous coordinates. Then we can pick two other points to form two lines, $p_1$ $(x_1,y_1,1)$ and $p_2$ $(x_2,y_2,1)$\\
+\begin{equation}
+l_1=p_1\times p_0 = (y_1-y_0,x_0-x_1,x_1*y_0-x_0*y_1)
+\end{equation}
+\begin{equation}
+l_2=p_2\times p_0 = (y_2-y_0,x_0-x_2,x_2*y_0-x_0*y_2)
+\end{equation}
+\begin{equation}
+p_{int}=l_1\times l_2 = (x_0,y_0,1)
+\end{equation}
+\begin{figure}[htdb]
+\centering
+\includegraphics[width=0.6\textwidth]{HW1_1_2.png}
+\caption{The figure shows $p=l_1\times l_2$}\label{fig:figure2}
+\end{figure}
+\end{enumerate}
+\subsection{Least squares and SVD.}
+\begin{enumerate}
+\item[a.]
+\item[b.]
+\item[c.]
+For $A^TA$, suppose $m_{ij}$ is an item in the matrix, which is at ith row and jth column. The we have \\
+\begin{equation}
+m_{ij}=\sum_{k=1}^{\infty}a_{ki}a_{kj}
+\end{equation}
+\begin{equation}
+m_{ji}=\sum_{k=1}^{\infty}a_{kj}a_{ki}
+\end{equation}
+So $m_{ij}=m_{ji}$, then matrix M (or $A^TA$) is symmetric.\\
+Then suppose $x$ is any matrix \\
+\begin{equation}
+Ax=y
+\end{equation}
+Where the dimension of A is $m\times n$, $x\in R^n$ and $y\in R^m$
+\begin{equation}
+(Ax)^T=x^TA^T=y^T
+\end{equation}
+\begin{equation}
+x^TA^TAx=x^TMx=y^Ty=y_1^2+y_2^2+y_3^2\dotsm\geqslant 0
+\end{equation}
+So M is also positive semi-definite(psd).
+\item[d.]
+Suppose \\
+\begin{equation}
+Ae=h
+\end{equation}
+Then \\
+\begin{equation}
+e^HMe=e^HA^HAe=h^Hh=\bar{h}_1h_1+\bar{h}_2h_2+\bar{h}_3h_3\dotsm
+\end{equation}
+Which is real, since $\bar{h}_i$ is conjugate to $h_i$.
+\begin{equation}
+e^HMe=e^H\lambda e=\lambda e^He
+\end{equation}
+$e^He$ is real, and the left side of the function is also real, so $\lambda$ must be real.
+\item[e.] 
+\begin{equation}
+e_1^TMe_2=e_1^T\lambda_2e_2=\lambda_2 e_1^Te_2
+\end{equation}
+Since M is symmetric, then \\
+\begin{equation}
+e_1^TMe_2=e_1^TM^Te_2=(Me_1)^Te_2=(\lambda_1e_1)^Te_2=\lambda_1e_1^Te_2
+\end{equation}
+Then we know \\
+\begin{equation}
+\lambda_2 e_1^Te_2=\lambda_1e_1^Te_2
+\end{equation}
+Because $\lambda_1\neq\lambda_2$, so there must be \\
+\begin{equation}
+e_1^Te_2=0
+\end{equation}
+So the corresponding eigenvectors are orthogonal. \\
+\item[f.]
+\begin{equation}
+M(e_1\; e_2\; e_3 \dotsm)=(e_1\; e_2\; e_3 \dotsm)\Lambda
+\end{equation}
+Where $e_i$ is the normalized eigenvectors of M, and $\Lambda$ is a diagonal matrix, whose items are the eigenvalues of M.\\
+Suppose \\
+\begin{equation}
+Q=(e_1\; e_2\; e_3 \dotsm)
+\end{equation} 
+So $Q^TQ=I$. \\
+Then \\
+\begin{equation}
+MQ=Q\Lambda
+\end{equation}
+Which means \\
+\begin{equation}
+MQQ^T=M=Q\Lambda Q^T
+\end{equation}
+\item[g.]
+\begin{equation}
+A^TA=M
+\end{equation}
+\begin{equation}
+V=Q
+\end{equation}
+\begin{equation}
+\Sigma^2=\Lambda
+\end{equation}
+Where $\sigma^2=\lambda$.
+So \\
+\begin{equation}
+MQ=A^TAV=Q\Lambda=V\Sigma^2
+\end{equation}
+\item[h.]
+\begin{equation}
+\begin{aligned}
+U^TU&=(AV\Sigma^{-1})^TAV\Sigma^{-1}=\Sigma^{-T}V^TA^TAV\Sigma^{-1} \\
+&=\Sigma^{-T}V^T(V\Sigma^2)\Sigma^{-1}=\Sigma^{-T}\Sigma
+\end{aligned}
+\end{equation}
+Since $\Sigma$ is a diagonal matrix, so \\
+\begin{equation}
+\Sigma^{-T}=\Sigma^{-1}
+\end{equation}
+So \\
+\begin{equation}
+U^TU=\Sigma^{-T}\Sigma=\Sigma^{-1}\Sigma=I
+\end{equation}
+For proving that the columns of U are eigenvectors of $AA^T$ \\
+\begin{equation}
+\begin{aligned}
+AA^TU&=AA^TAV\Sigma^{-1}=A(V\Sigma^2)\Sigma^{-1} \\
+&=AV\Sigma=AV\Sigma^{-1}\Sigma^2=U\Sigma^2
+\end{aligned}
+\end{equation}
+Where $\Sigma^2$ is a diagonal matrix, so the columns of U are eigenvectors of $AA^T$. \\
+\item[i.]
+Since $U_{m\times n}=AV\Sigma^{-1}$, then \\
+\begin{equation}
+AV=U_{m\times n}\Sigma_{n\times n}
+\end{equation}
+\begin{equation}
+A=U_{m\times n}\Sigma_{n\times n}V_{n\times n}^T
+\end{equation}
+\end{enumerate}
+
+\end{document}
