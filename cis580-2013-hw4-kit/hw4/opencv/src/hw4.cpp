@@ -12,7 +12,7 @@ using namespace cv;
 Mat minimizeAx(const Mat &A)
 {
   // TODO: complete this function
-
+  SVD svdOfA(A, SVD::FULL_UV);
   return Mat();
 }
 
