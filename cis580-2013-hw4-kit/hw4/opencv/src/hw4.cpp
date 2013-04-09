@@ -29,12 +29,35 @@ Vec3d fitLine(const Mat &im, size_t n)
 {
   // TODO: complete this function
   int count = 0;
+  Vec3d VanPt;
+  Mat N(n,3,CV_64FC1);
+  Mat Imm = im.clone();
   while(count<n){
-    
+    cout << "============================================" << endl;
+    if (count==0)
+    {
+      cout << "Please Select a point on a line."<<(n-count)<<" points  left." << endl;
+    }else{
+      cout << "Please Select a point on the same line."<<(n-count)<<"points  left." << endl;
+    }
+    Point PTs = getClick("PointsToFitLine", Imm); 
+    drawCross(Imm, PTs, 5);
+    N.at<double>(count,0) = PTs.x;
+    N.at<double>(count,1) = PTs.y;
+    N.at<double>(count,2) = 1;
     count++;
   }
+  cout<<"N="<<endl<<N<<endl<<endl;
+  if (n<=2)
+  {
+    VanPt = N.row(0).cross(N.row(1));
+    double lengthOfVan = 1/norm(VanPt);
+    VanPt = VanPt*lengthOfVan;
+  }else{
+    VanPt = minimizeAx(N);
+  }
 
-  return Vec3d();
+  return VanPt;
 }
 
 /**
@@ -46,8 +69,22 @@ Vec3d fitLine(const Mat &im, size_t n)
 Vec3d findIntersection(const Mat &L)
 {
   // TODO: complete this function
+  Vec3d IntPt;
+  if(L.rows<2)
+  {
+    cout<<"There must be at least two points to find an intersection"<<endl;
+  }else{
+    if (L.rows==2)
+    {
+      IntPt = L.row(0).cross(L.row(1));
+      double lengthOfInt = 1/norm(IntPt);
+      IntPt = IntPt*lengthOfInt;
+    }else{
+      IntPt = minimizeAx(L);
+    }
+  }
   
-  return Vec3d();
+  return IntPt;
 }
 
 /**
