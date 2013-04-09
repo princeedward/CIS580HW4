@@ -13,7 +13,9 @@ Mat minimizeAx(const Mat &A)
 {
   // TODO: complete this function
   SVD svdOfA(A, SVD::FULL_UV);
-  return Mat();
+  transpose(svdOfA.vt,svdOfA.vt);
+
+  return svdOfA.vt.col(svdOfA.vt.cols-1);
 }
 
 
@@ -26,6 +28,11 @@ Mat minimizeAx(const Mat &A)
 Vec3d fitLine(const Mat &im, size_t n)
 {
   // TODO: complete this function
+  int count = 0;
+  while(count<n){
+    
+    count++;
+  }
 
   return Vec3d();
 }

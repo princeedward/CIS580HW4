@@ -32,7 +32,12 @@ int main(int argc, char **argv)
   //       looping = false;
   //   }
   // }
-  cout<<"Hello world"<<endl;
+  double n[4][2] = {{1,2}, {3,4}, {5,6},{7,8}};
+  Mat N = (Mat_<double>(4,2)<<1,2,3,4,5,6,7,8);
+  // Mat W(2,2,CV_64F);
+  // W = minimizeAx(N);
+  cout << "N = "<< endl << " "  << N<< endl << endl;
+  cout << "W = "<< endl << " "  << minimizeAx(N)<< endl << endl;
   return 0;
 }
 
