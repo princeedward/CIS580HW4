@@ -87,8 +87,23 @@ p_{int}=l_1\times l_2 = (x_0,y_0,1)
 \end{enumerate}
 \subsection{Least squares and SVD.}
 \begin{enumerate}
-\item[a.]
+\item[a.] The Lagrangian is \\
+\begin{equation}
+L(w,\lambda)=\|Aw\|^2-\lambda(\|w\|^2-1)
+\end{equation}
+To prove it is convex, we have to prove $\bigtriangledown^2L(w,\lambda)$ is p.s.d.
+\begin{equation}
+\bigtriangledown^2L(w,\lambda)=\bigtriangledown^2\|Aw\|^2-\bigtriangledown^2\lambda(\|w\|^2-1)
+\end{equation}
+Since $\bigtriangledown^2\|Aw\|^2$ ans $\bigtriangledown^2\lambda(\|w\|^2-1)$ are both symmetric, then we can easily tell they are p.s.d.(which will be proved in the following problems). So the sum of them is also p.s.d.
 \item[b.]
+\begin{equation}
+\frac{\partial}{\partial w} \|Aw\|^2-\frac{\partial}{\partial w} \lambda(\|w\|^2-1)=0
+\end{equation}
+\begin{equation}
+\frac{\partial}{\partial w} \|Aw\|^2=2w^TA^TAw=\lambda\frac{\partial}{\partial w} \|w\|^2=2\lambda w^Tw
+\end{equation}
+So the $w$ is the eigenvector of $A^TA$.
 \item[c.]
 For $A^TA$, suppose $m_{ij}$ is an item in the matrix, which is at ith row and jth column. The we have \\
 \begin{equation}
@@ -205,6 +220,7 @@ AV=U_{m\times n}\Sigma_{n\times n}
 \begin{equation}
 A=U_{m\times n}\Sigma_{n\times n}V_{n\times n}^T
 \end{equation}
+\item[j.]
 \end{enumerate}
 
 \end{document}
