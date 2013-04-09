@@ -1,0 +1,59 @@
+cmake_minimum_required(VERSION 2.6)
+project(cis580_hw4)
+
+# Dependencies
+find_package(OpenCV 2.4 REQUIRED core imgproc highgui calib3d)
+
+# configure a header file which will help load images from the
+# images/ folder
+file(TO_NATIVE_PATH "${PROJECT_SOURCE_DIR}/images/" IMAGES_PATH)
+configure_file(
+  "${PROJECT_SOURCE_DIR}/include/config.h.in"
+  "${PROJECT_BINARY_DIR}/config.h"
+)
+
+# set the default path for includes
+include_directories(
+  ${OpenCV_INCLUDE_DIRS}
+  "${PROJECT_SOURCE_DIR}/include"
+  "${PROJECT_BINARY_DIR}"
+)
+
+add_library(${PROJECT_NAME}
+  src/hw4.cpp
+  src/hw4_helpers.cpp
+  )
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+
+add_executable(hello_opencv src/hello_opencv.cpp)
+target_link_libraries(hello_opencv ${PROJECT_NAME})
+
+add_executable(image_rectification
+  src/image_rectification.cpp
+  )
+target_link_libraries(image_rectification ${PROJECT_NAME})
+
+enable_testing()
+find_package(GTest)
+if(GTEST_FOUND)
+  find_package(Threads REQUIRED)
+  if(COMMAND cmake_policy)
+    cmake_policy(SET CMP0003 NEW)
+  endif(COMMAND cmake_policy)
+  include_directories(${GTEST_INCLUDE_DIRS})
+
+  add_executable(test_hw4
+    test/test_main.cpp
+    test/test_minimizeAx.cpp
+    test/test_findIntersection.cpp
+    test/test_computeProjTransfo.cpp
+    test/test_fitHomography.cpp
+    )
+  target_link_libraries(test_hw4
+    ${GTEST_BOTH_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+    ${PROJECT_NAME}
+    )
+  add_test(test_hw4 ${EXECUTABLE_OUTPUT_PATH}/test_hw4)
+
+endif(GTEST_FOUND)
