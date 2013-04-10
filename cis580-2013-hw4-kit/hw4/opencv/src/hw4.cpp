@@ -47,7 +47,7 @@ Vec3d fitLine(const Mat &im, size_t n)
     N.at<double>(count,2) = 1;
     count++;
   }
-  cout<<"N="<<endl<<N<<endl<<endl;
+  // cout<<"N="<<endl<<N<<endl<<endl;
   if (n<=2)
   {
     VanPt = N.row(0).cross(N.row(1));
@@ -98,6 +98,10 @@ Mat computeProjTransfo(const Vec3d &vx, const Vec3d &vy,
     const Point &x00, const Point &x11)
 {
   // TODO: complete this function
+  // cout<<"Vx="<<endl<<vx<<endl;
+  // cout<<"vy="<<endl<<vy<<endl;
+  // cout<<"X00="<<endl<<x00<<endl;
+  // cout<<"X11="<<endl<<x11<<endl;
   Mat A = Mat::eye(3, 3, CV_64FC1);
   Mat H(3,3,CV_64FC1);
   for (int i = 0; i < 3; ++i)
@@ -111,19 +115,23 @@ Mat computeProjTransfo(const Vec3d &vx, const Vec3d &vy,
   H.at<double>(0,2) = x00.x;
   H.at<double>(1,2) = x00.y;
   H.at<double>(2,2) = 1;
-  Vec3d v;
-  Vec3d x1;
-  x1[0] = x00.x;
-  x1[1] = x00.y;
-  x1[2] = 1;
+  // cout<<"H="<<endl<<H<<endl;
+  Mat v(3,1,CV_64FC1);
+  Mat x1(3,1,CV_64FC1);
+  x1.at<double>(0) = x11.x;
+  x1.at<double>(1)= x11.y;
+  x1.at<double>(2) = 1;
   solve(H,x1,v);
+  // cout<<"v="<<endl<<v<<endl;
   Mat diagv;
   diagv = Mat::zeros(3, 3, CV_64FC1);
   for (int i = 0; i < 3; ++i)
   {
-    diagv.at<double>(i,i) = v[i];
+    diagv.at<double>(i,i) = v.at<double>(i);
   }
+  // cout<<"diagv="<<endl<<diagv<<endl;
   A = H*diagv;
+  // cout<<"A="<<endl<<A<<endl;
 
   return A;
 }
@@ -139,6 +147,29 @@ Mat rectifyImage(const Mat &A, const Mat &im, size_t N)
 {
   // TODO: complete this function
   Mat rectified(N, N, im.type());
+  int i, j;
+  for (i = 0; i < N; ++i)
+  {
+    for (j = 0; j < N; ++j)
+    {
+      Mat CurrentPoint(3,1,CV_64FC1);
+      CurrentPoint.at<double>(0) = ((double)i)/(N-1);
+      CurrentPoint.at<double>(1) = ((double)j)/(N-1);
+      CurrentPoint.at<double>(2) = (double)1;
+      // cout<<"CurrentPoint="<<endl<<CurrentPoint<<endl;
+      Mat OriginalPoint = A*CurrentPoint;
+      int coordin[2];
+      coordin[0] = OriginalPoint.at<double>(0)/OriginalPoint.at<double>(2);
+      coordin[1] = OriginalPoint.at<double>(1)/OriginalPoint.at<double>(2);
+      // cout<<"MapCoordin="<<endl<<coordin[0]<<","<<coordin[1]<<endl;
+      // cout<<"Size of im"<<im.rows<<","<<im.cols<<endl;
+      // cout<<"ColorMapPre="<<endl<<im.at<Vec3b>(coordin[0],coordin[1])<<endl;
+      rectified.at<Vec3b>(199-j,i) = im.at<Vec3b>(coordin[1],coordin[0]);
+      // cout<<"CurrentPoint="<<endl<<CurrentPoint<<endl;
+      // cout<<"MapCoordin="<<endl<<coordin[0]<<","<<coordin[1]<<endl;
+      // cout<<"ColorMap="<<endl<<rectified.at<Vec3b>(i,j) <<endl;
+    }
+  }
 
   return rectified;
 }
