@@ -99,6 +99,31 @@ Mat computeProjTransfo(const Vec3d &vx, const Vec3d &vy,
 {
   // TODO: complete this function
   Mat A = Mat::eye(3, 3, CV_64FC1);
+  Mat H(3,3,CV_64FC1);
+  for (int i = 0; i < 3; ++i)
+  {
+    H.at<double>(i,0) = vx[i];
+  }
+  for (int i = 0; i < 3; ++i)
+  {
+    H.at<double>(i,1) = vy[i];
+  }
+  H.at<double>(0,2) = x00.x;
+  H.at<double>(1,2) = x00.y;
+  H.at<double>(2,2) = 1;
+  Vec3d v;
+  Vec3d x1;
+  x1[0] = x00.x;
+  x1[1] = x00.y;
+  x1[2] = 1;
+  solve(H,x1,v);
+  Mat diagv;
+  diagv = Mat::zeros(3, 3, CV_64FC1);
+  for (int i = 0; i < 3; ++i)
+  {
+    diagv.at<double>(i,i) = v[i];
+  }
+  A = H*diagv;
 
   return A;
 }
