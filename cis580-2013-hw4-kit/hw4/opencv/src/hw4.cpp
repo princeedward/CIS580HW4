@@ -1,4 +1,5 @@
 #include <iostream>
+#include <opencv2/highgui/highgui.hpp>
 #include "hw4.h"
 
 using namespace std;
@@ -14,6 +15,7 @@ Mat minimizeAx(const Mat &A)
   // TODO: complete this function
   SVD svdOfA(A, SVD::FULL_UV);
   transpose(svdOfA.vt,svdOfA.vt);
+  cout<<"Lambda="<<svdOfA.w<<endl;
 
   return svdOfA.vt.col(svdOfA.vt.cols-1);
 }
@@ -114,13 +116,13 @@ Mat computeProjTransfo(const Vec3d &vx, const Vec3d &vy,
   }
   H.at<double>(0,2) = x00.x;
   H.at<double>(1,2) = x00.y;
-  H.at<double>(2,2) = 1;
+  H.at<double>(2,2) = 1.0;
   // cout<<"H="<<endl<<H<<endl;
   Mat v(3,1,CV_64FC1);
   Mat x1(3,1,CV_64FC1);
   x1.at<double>(0) = x11.x;
   x1.at<double>(1)= x11.y;
-  x1.at<double>(2) = 1;
+  x1.at<double>(2) = 1.0;
   solve(H,x1,v);
   // cout<<"v="<<endl<<v<<endl;
   Mat diagv;
@@ -155,7 +157,7 @@ Mat rectifyImage(const Mat &A, const Mat &im, size_t N)
       Mat CurrentPoint(3,1,CV_64FC1);
       CurrentPoint.at<double>(0) = ((double)i)/(N-1);
       CurrentPoint.at<double>(1) = ((double)j)/(N-1);
-      CurrentPoint.at<double>(2) = (double)1;
+      CurrentPoint.at<double>(2) = (double)1.0;
       // cout<<"CurrentPoint="<<endl<<CurrentPoint<<endl;
       Mat OriginalPoint = A*CurrentPoint;
       int coordin[2];
@@ -194,15 +196,34 @@ Mat fitHomography(const Mat &X1, const Mat &X2)
   Mat_<double> M(2*N, 9);
   
   // populate M here
-
-
-
+  for (int i = 0; i < N; ++i)
+  {
+    M(2*i,0) = X1.at<Vec2d>(i)[0];
+    M(2*i,1) = X1.at<Vec2d>(i)[1];
+    M(2*i,2) = 1.0;
+    M(2*i,3) = 0.0;
+    M(2*i,4) = 0.0;
+    M(2*i,5) = 0.0;
+    M(2*i,6) = -X1.at<Vec2d>(i)[0]*X2.at<Vec2d>(i)[0];
+    M(2*i,7) = -X1.at<Vec2d>(i)[1]*X2.at<Vec2d>(i)[0];
+    M(2*i,8) = -X2.at<Vec2d>(i)[0];
+    M(2*i+1,0) = 0.0;
+    M(2*i+1,1) = 0.0;
+    M(2*i+1,2) = 0.0;
+    M(2*i+1,3) = X1.at<Vec2d>(i)[0];
+    M(2*i+1,4) = X1.at<Vec2d>(i)[1];
+    M(2*i+1,5) = 1.0;
+    M(2*i+1,6) = -X1.at<Vec2d>(i)[0]*X2.at<Vec2d>(i)[1];
+    M(2*i+1,7) = -X1.at<Vec2d>(i)[1]*X2.at<Vec2d>(i)[1];
+    M(2*i+1,8) = -X2.at<Vec2d>(i)[1];
+  }
 
   Mat A(9, 1, CV_64FC1);
   // solve for A here
+  Mat B = minimizeAx(M);
+  A = 1*B/B.at<double>(8);
+  cout<<"A="<<endl<<A<<endl;
 
-
-  
 
   return A.reshape(1, 3); // reshapes the 9x1 vector to single channel, 3 rows matrix
 };
@@ -218,15 +239,34 @@ Mat fitHomography(const Mat &X1, const Mat &X2)
 Mat findCorrespAndFitHomography(const Mat &im1, const Mat &im2,
     size_t N)
 {
-  Mat X1(N, 1, CV_32SC1);
-  Mat X2(N, 1, CV_32SC1);
+  Mat X1(N, 1, CV_64FC2);
+  Mat X2(N, 1, CV_64FC2);
 
   // display images and populate X1 and X2 with correspondences
+  Mat im1cpy = im1.clone();
+  Mat im2cpy = im2.clone();
+  namedWindow("image 1", WINDOW_FLAGS);
+  namedWindow("image 2", WINDOW_FLAGS);
 
-
-
-
-
+  imshow("image 1", im1cpy);
+  imshow("image 2", im2cpy);
+  for (int i = 0; i < N; ++i)
+  {
+    cout<<"Please select a point in image 1"<<endl;
+    Point point1 = getClick("image 1", im1cpy);
+    drawCross(im1cpy, point1, 5);
+    cout<<"PointIn1="<<point1<<endl;
+    imshow("image 1", im1cpy);
+    cout<<"Please select a cooresponding point in image 2"<<endl;
+    Point point2 = getClick("image 2", im2cpy);
+    drawCross(im2cpy, point2, 5);
+    cout<<"PointIn2="<<point2<<endl;
+    imshow("image 2", im2cpy);
+    X1.at<Vec2d>(i)[0] = point1.x;
+    X1.at<Vec2d>(i)[1] = point1.y;
+    X2.at<Vec2d>(i)[0] = point2.x;
+    X2.at<Vec2d>(i)[1] = point2.y;
+  }
 
   return fitHomography(X1, X2);
 }

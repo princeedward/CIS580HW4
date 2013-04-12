@@ -222,5 +222,46 @@ A=U_{m\times n}\Sigma_{n\times n}V_{n\times n}^T
 \end{equation}
 \item[j.]
 \end{enumerate}
-
+\section{Panoramic image stitching}
+\subsection{Image rectification}
+\subsection{Projective transformation between two images}
+\begin{enumerate}
+\item Suppose a rectification of the same object in different image will map to the same frame(plane), but different coordinates systems. So if we want to find a transformation matrix that can map a point on one image to the other, then we have to first map this point to the rectification frame, translate the coordinates to the other system, and then transfer back to the second image. The process can be shown in the following equations. \\
+\begin{equation}
+x = A^{-1}v
+\end{equation}
+Where x is the coordinates in the rectification frame, and v is the coordinates in the first image. \\
+\begin{equation}
+\tilde{x}=Tx
+\end{equation}
+Where T is the in plane translation matrix. \\
+\begin{equation}
+\tilde{v} = \tilde{A} \tilde{x} = \tilde{A} T A^{-1}v
+\end{equation}
+\item
+\begin{enumerate}
+\item[a.]
+\begin{equation} \label{eqn:m0}
+\begin{aligned}
+m&=[x\;\; y\;\; 1\;\; 0\;\; 0\;\; 0\; -xx\prime\; -yx\prime\; -x\prime\;][A_{11}\; A_{12}\; A_{13}\; A_{21}\; A_{22}\; A_{23}\; A_{31}\; A_{32}\; A_{33}]^T  \\
+&=xA_{11}+yA_{12}+A_{13}-xx\prime A_{31} -yx\prime A_{32}-x\prime A_{33} \\
+&=xA_{11}+yA_{12}+A_{13}-(x A_{31} +y A_{32}+ A_{33})x\prime
+\end{aligned}
+\end{equation}
+And from $p\prime\sim Ap$ we know \\
+\begin{equation} \label{eqn:m1}
+x\prime = xA_{11}+yA_{12}+A_{13}
+\end{equation}
+\begin{equation} \label{eqn:m2}
+1=x A_{31} +y A_{32}+ A_{33}
+\end{equation}
+Take equations \eqref{eqn:m1} and \eqref{eqn:m2} into \eqref{eqn:m0} we can get \\
+\begin{equation}
+m = xA_{11}+yA_{12}+A_{13}-1(xA_{11}+yA_{12}+A_{13}) = 0
+\end{equation}
+Similar to the second row of the first matrix in the equation provided. \\
+\item[b.]
+The smallest number of N is $N=5$, and the condition on the points is any three of them cannot be on the same line.
+\end{enumerate}
+\end{enumerate}
 \end{document}
