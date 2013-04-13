@@ -33,6 +33,16 @@ add_executable(image_rectification
   )
 target_link_libraries(image_rectification ${PROJECT_NAME})
 
+add_executable(Image_stitching
+  src/Image_stitching.cpp
+  )
+target_link_libraries(Image_stitching ${PROJECT_NAME})
+
+add_executable(Image_stitching_rect
+  src/Image_stitching_rect.cpp
+  )
+target_link_libraries(Image_stitching_rect ${PROJECT_NAME})
+
 enable_testing()
 find_package(GTest)
 if(GTEST_FOUND)

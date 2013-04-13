@@ -15,7 +15,7 @@ Mat minimizeAx(const Mat &A)
   // TODO: complete this function
   SVD svdOfA(A, SVD::FULL_UV);
   transpose(svdOfA.vt,svdOfA.vt);
-  cout<<"Lambda="<<svdOfA.w<<endl;
+  // cout<<"Lambda="<<svdOfA.w<<endl;
 
   return svdOfA.vt.col(svdOfA.vt.cols-1);
 }
@@ -148,15 +148,15 @@ Mat computeProjTransfo(const Vec3d &vx, const Vec3d &vy,
 Mat rectifyImage(const Mat &A, const Mat &im, size_t N)
 {
   // TODO: complete this function
-  Mat rectified(N, N, im.type());
+  Mat rectified(N, N, im.type(),Scalar::all(0));
   int i, j;
   for (i = 0; i < N; ++i)
   {
     for (j = 0; j < N; ++j)
     {
       Mat CurrentPoint(3,1,CV_64FC1);
-      CurrentPoint.at<double>(0) = ((double)i)/(N-1);
-      CurrentPoint.at<double>(1) = ((double)j)/(N-1);
+      CurrentPoint.at<double>(0) = ((double)j)/(N-1);
+      CurrentPoint.at<double>(1) = ((double)i)/(N-1);
       CurrentPoint.at<double>(2) = (double)1.0;
       // cout<<"CurrentPoint="<<endl<<CurrentPoint<<endl;
       Mat OriginalPoint = A*CurrentPoint;
@@ -166,7 +166,10 @@ Mat rectifyImage(const Mat &A, const Mat &im, size_t N)
       // cout<<"MapCoordin="<<endl<<coordin[0]<<","<<coordin[1]<<endl;
       // cout<<"Size of im"<<im.rows<<","<<im.cols<<endl;
       // cout<<"ColorMapPre="<<endl<<im.at<Vec3b>(coordin[0],coordin[1])<<endl;
-      rectified.at<Vec3b>(199-j,i) = im.at<Vec3b>(coordin[1],coordin[0]);
+      if (coordin[1]>=0&&coordin[1]<im.rows&&coordin[0]>=0&&coordin[0]<im.cols)
+      {
+        rectified.at<Vec3b>(N-1-i,j) = im.at<Vec3b>(coordin[1],coordin[0]);
+      }
       // cout<<"CurrentPoint="<<endl<<CurrentPoint<<endl;
       // cout<<"MapCoordin="<<endl<<coordin[0]<<","<<coordin[1]<<endl;
       // cout<<"ColorMap="<<endl<<rectified.at<Vec3b>(i,j) <<endl;
@@ -270,3 +273,4 @@ Mat findCorrespAndFitHomography(const Mat &im1, const Mat &im2,
 
   return fitHomography(X1, X2);
 }
+
